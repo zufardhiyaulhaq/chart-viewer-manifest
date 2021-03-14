@@ -1,0 +1,30 @@
+apiVersion: batch/v1
+kind: Job
+metadata:
+  name: chart-viewer-seeder
+  labels:
+    app: chart-viewer-seeder
+spec:
+  template:
+    spec:
+      restartPolicy: OnFailure
+      containers:
+        - name: chart-viewer-seeder
+          image: ecojuntak/chart-viewer:v0.0.2
+          imagePullPolicy: Always
+          command: ["./chart-viewer"]
+          args:
+            - seed
+            - --redis-host
+            - chart-viewer-redis.default.svc.cluster.local
+          volumeMounts:
+            - name: seed
+              mountPath: /app/seed.json
+              subPath: seed.json
+      volumes:
+        - name: seed
+          configMap:
+            name: chart-viewer
+            items:
+              - key: seed.json
+                path: seed.json

@@ -1,0 +1,37 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: chart-viewer
+  labels:
+    app: chart-viewer
+spec:
+  replicas: 2
+  strategy:
+    type: RollingUpdate
+    rollingUpdate:
+      maxSurge: 1
+      maxUnavailable: 25%
+  selector:
+    matchLabels:
+      app: chart-viewer
+  template:
+    metadata:
+      labels:
+        app: chart-viewer
+    spec:
+      containers:
+      - name: chart-viewer
+        image: ecojuntak/chart-viewer:v0.0.2
+        imagePullPolicy: Always
+        command: ["./chart-viewer"]
+        args:
+          - serve
+          - --port
+          - "80"
+          - --redis-host
+          - chart-viewer-redis.default.svc.cluster.local
+        ports:
+        - containerPort: 80
+        envFrom:
+        - configMapRef:
+            name: chart-viewer

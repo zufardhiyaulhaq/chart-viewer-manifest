@@ -1,0 +1,25 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: chart-viewer-redis
+  labels:
+    app: chart-viewer-redis
+spec:
+  selector:
+    matchLabels:
+      app: chart-viewer-redis
+  template:
+    metadata:
+      labels:
+        app: chart-viewer-redis
+    spec:
+      containers:
+      - name: redis
+        image: redis
+        imagePullPolicy: IfNotPresent
+        resources:
+          requests:
+            cpu: 100m
+            memory: 100Mi
+        ports:
+        - containerPort: 6379
